@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacred & Motivational Badges</title>
+    <!-- Tailwind CSS for a clean, responsive design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main container for the badge content -->
+    <div id="badge-container" class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-8 text-center flex flex-col items-center justify-center transition-all duration-500 ease-in-out">
+        <h1 id="series-title" class="text-3xl font-bold text-gray-800 mb-6 transition-all duration-500"></h1>
+        <!-- Image container with loading state and initial content -->
+        <div class="w-full h-auto max-h-[70vh] flex items-center justify-center bg-gray-100 rounded-xl p-4 transition-all duration-500 overflow-hidden">
+            <img id="display-image" src="" alt="Image from the selected series" class="rounded-lg shadow-md object-contain max-h-full max-w-full hidden">
+            <div id="loading-spinner" class="flex flex-col items-center justify-center">
+                <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-gray-500">Loading image...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Use an IIFE (Immediately Invoked Function Expression) to keep variables out of the global scope
+        (async function() {
+            // This is our "database" of image URLs.
+            // These paths are now relative to the root of your project on GitHub Pages.
+            const imageSeries = {
+                'geeta': {
+                    title: "Bhagavad Geeta Verse",
+                    images: [
+                        '/images/geeta/geeta-1.jpg',
+                        '/images/geeta/geeta-2.jpg',
+                        '/images/geeta/geeta-3.jpg',
+                        '/images/geeta/geeta-4.jpg'
+                    ]
+                },
+                'quran': {
+                    title: "Quran Verse",
+                    images: [
+                        '/images/quran/quran-1.jpg',
+                        '/images/quran/quran-2.jpg',
+                        '/images/quran/quran-3.jpg',
+                        '/images/quran/quran-4.jpg'
+                    ]
+                },
+                'bible': {
+                    title: "Bible Verse",
+                    images: [
+                        '/images/bible/bible-1.jpg',
+                        '/images/bible/bible-2.jpg',
+                        '/images/bible/bible-3.jpg',
+                        '/images/bible/bible-4.jpg'
+                    ]
+                },
+                'quotes': {
+                    title: "Motivational Quote",
+                    images: [
+                        '/images/quotes/quote-1.jpg',
+                        '/images/quotes/quote-2.jpg',
+                        '/images/quotes/quote-3.jpg',
+                        '/images/quotes/quote-4.jpg'
+                    ]
+                },
+                'filmy': {
+                    title: "Filmy Dialogue",
+                    images: [
+                        '/images/filmy/filmy-1.jpg',
+                        '/images/filmy/filmy-2.jpg',
+                        '/images/filmy/filmy-3.jpg',
+                        '/images/filmy/filmy-4.jpg'
+                    ]
+                }
+            };
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const seriesKey = urlParams.get('series');
+
+            const seriesData = imageSeries[seriesKey];
+            const titleElement = document.getElementById('series-title');
+            const imageElement = document.getElementById('display-image');
+            const spinner = document.getElementById('loading-spinner');
+            
+            // Function to display an image after a short delay to simulate loading
+            const displayImage = (imageUrl, title) => {
+                // Set the title
+                titleElement.textContent = title;
+                // Fade out the spinner and fade in the image
+                spinner.classList.add('hidden');
+                imageElement.src = imageUrl;
+                imageElement.classList.remove('hidden');
+            };
+
+            if (seriesData) {
+                // Get a random index from the array of images
+                const randomIndex = Math.floor(Math.random() * seriesData.images.length);
+                const randomImageUrl = seriesData.images[randomIndex];
+
+                // Check if the image has already been loaded from the cache
+                const img = new Image();
+                img.onload = () => {
+                    displayImage(randomImageUrl, seriesData.title);
+                };
+                img.onerror = () => {
+                    console.error("Failed to load image from:", randomImageUrl);
+                    titleElement.textContent = "Error Loading Image";
+                    spinner.classList.add('hidden');
+                    // Use a placeholder for error state
+                    imageElement.src = 'https://placehold.co/800x600/e5e7eb/6b7280?text=Image+Not+Found';
+                    imageElement.classList.remove('hidden');
+                };
+                img.src = randomImageUrl;
+            } else {
+                // Default content if no series is specified
+                titleElement.textContent = "Scan a Badge!";
+                spinner.classList.add('hidden');
+                imageElement.src = 'https://placehold.co/800x600/d1d5db/4b5563?text=Scan+a+QR+Code';
+                imageElement.classList.remove('hidden');
+            }
+        })();
+    </script>
+</body>
+</html>
